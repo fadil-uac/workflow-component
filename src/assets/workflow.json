@@ -1,0 +1,351 @@
+[
+  {
+    "DATA_TYPE": "WORKFLOW_DEFINITION",
+    "states": {
+      "WITHDRAWN": {
+        "finalState": true,
+        "tasks": {
+          "REVIVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "revive"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Revive"
+          },
+          "CLOSE": {
+            "type": "SYSTEM",
+            "label": "Close"
+          }
+        },
+        "label": "Withdrawn"
+      },
+      "CREDIT_TEAM": {
+        "preActions": {
+          "runDemoteAllCredits": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Demote all credits",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-demoteAllCredits"
+          }
+        },
+        "label": "Credit team",
+        "data": {
+          "canDoManualMatching": true,
+          "permission": {
+            "component": "applications",
+            "usage": "match"
+          },
+          "canRunCreditSearch": true
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_APPROVER": {
+            "type": "MANUAL",
+            "label": "Assign to approver"
+          },
+          "ASSIGN_TO_SME": {
+            "type": "MANUAL",
+            "label": "Assign to SME"
+          },
+          "REQUEST_ADDITIONAL_INFORMATION": {
+            "type": "MANUAL",
+            "label": "Request further information"
+          },
+          "PUT_ON_HOLD": {
+            "type": "MANUAL",
+            "label": "Put on hold"
+          }
+        }
+      },
+      "ON_HOLD_CREDIT_TEAM": {
+        "label": "On hold by credit team",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_CREDIT_TEAM": {
+            "type": "MANUAL",
+            "label": "Assign to credit team"
+          }
+        }
+      },
+      "CLOSED": {
+        "preActions": {
+          "closeApplicationLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Close Application",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-closeApplication"
+          }
+        },
+        "finalState": true,
+        "label": "Closed"
+      },
+      "ON_HOLD_AWAITING_DECISION": {
+        "label": "On hold - awaiting decision",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "approve"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_APPROVER": {
+            "type": "MANUAL",
+            "label": "Assign to approver"
+          }
+        }
+      },
+      "AWAITING_ADDITIONAL_INFORMATION": {
+        "label": "Awaiting further information",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "RECEIVED_ADDITIONAL_INFORMATION": {
+            "type": "MANUAL",
+            "label": "More information provided"
+          }
+        }
+      },
+      "ADDITIONAL_INFORMATION_RECEIVED": {
+        "label": "More information provided",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_CREDIT_TEAM": {
+            "type": "MANUAL",
+            "label": "Assign to credit team"
+          }
+        }
+      },
+      "ANY": {
+        "finalState": false,
+        "tasks": {
+          "WITHDRAW": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "cancel"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Withdraw"
+          },
+          "CANCEL": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "cancel"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Cancel"
+          },
+          "CLOSE": {
+            "type": "SYSTEM",
+            "label": "Close"
+          }
+        },
+        "label": "Any"
+      }
+    },
+    "SK": "DEFINITION|APPLICATION",
+    "PK": "WORKFLOW",
+    "ID": "APPLICATION",
+    "transitions": {
+      "WITHDRAWN": [
+        {
+          "nextState": "REVIVED",
+          "requiredTasks": ["REVIVE"]
+        },
+        {
+          "nextState": "CLOSED",
+          "requiredTasks": ["CLOSE"]
+        }
+      ],
+      "CREDIT_TEAM": [
+        {
+          "nextState": "REFER_TO_SME",
+          "requiredTasks": ["ASSIGN_TO_SME"]
+        },
+        {
+          "nextState": "AWAITING_DECISION",
+          "requiredTasks": ["ASSIGN_TO_APPROVER"]
+        },
+        {
+          "nextState": "ADDITIONAL_INFORMATION_REQUESTED",
+          "requiredTasks": ["REQUEST_ADDITIONAL_INFORMATION"]
+        },
+        {
+          "nextState": "ON_HOLD_CREDIT_TEAM",
+          "requiredTasks": ["PUT_ON_HOLD"]
+        }
+      ],
+      "ON_HOLD_CREDIT_TEAM": [
+        {
+          "nextState": "CREDIT_TEAM",
+          "requiredTasks": ["ASSIGN_TO_CREDIT_TEAM"]
+        }
+      ],
+      "ON_HOLD_AWAITING_DECISION": [
+        {
+          "nextState": "AWAITING_DECISION",
+          "requiredTasks": ["ASSIGN_TO_APPROVER"]
+        }
+      ],
+      "AWAITING_ADDITIONAL_INFORMATION": [
+        {
+          "nextState": "ADDITIONAL_INFORMATION_RECEIVED",
+          "requiredTasks": ["RECEIVED_ADDITIONAL_INFORMATION"]
+        }
+      ],
+      "ADDITIONAL_INFORMATION_RECEIVED": [
+        {
+          "nextState": "CREDIT_TEAM",
+          "requiredTasks": ["ASSIGN_TO_CREDIT_TEAM"]
+        }
+      ],
+      "ANY": [
+        {
+          "nextState": "CANCELLED",
+          "requiredTasks": ["CANCEL"]
+        },
+        {
+          "nextState": "WITHDRAWN",
+          "requiredTasks": ["WITHDRAW"]
+        },
+        {
+          "nextState": "CLOSED",
+          "requiredTasks": ["CLOSE"]
+        }
+      ],
+      "VERIFICATION_IN_PROGRESS": [
+        {
+          "nextState": "AUTO_MATCHING",
+          "requiredTasks": ["RUN_CREDIT_SEARCH"]
+        },
+        {
+          "nextState": "ADDITIONAL_INFORMATION_REQUESTED",
+          "requiredTasks": ["REQUEST_ADDITIONAL_INFORMATION"]
+        },
+        {
+          "nextState": "ARTS_IN_PROGRESS",
+          "requiredTasks": ["START_ARTS"]
+        }
+      ],
+      "APPLICATION_RECEIVED": [
+        {
+          "nextState": "VISA_COMPLIANCE_CHECK",
+          "requiredFlags": {
+            "flags": ["INTERNATIONAL"],
+            "type": "ALL"
+          }
+        },
+        {
+          "nextState": "VERIFICATION_NOT_STARTED",
+          "requiredFlags": {
+            "flags": ["DOMESTIC"],
+            "type": "ALL"
+          }
+        }
+      ],
+      "VISA_COMPLIANCE_CHECK": [
+        {
+          "nextState": "VERIFICATION_IN_PROGRESS",
+          "requiredTasks": ["START_VERIFICATION"]
+        }
+      ],
+      "AWAITING_DECISION": [
+        {
+          "nextState": "REFER_TO_SME",
+          "requiredTasks": ["ASSIGN_TO_SME"]
+        },
+        {
+          "nextState": "CREDIT_TEAM",
+          "requiredTasks": ["ASSIGN_TO_CREDIT_TEAM"]
+        },
+        {
+          "nextState": "ON_HOLD_AWAITING_DECISION",
+          "requiredTasks": ["PUT_ON_HOLD"]
+        },
+        {
+          "nextState": "APPROVED",
+          "requiredTasks": ["APPROVE"]
+        },
+        {
+          "nextState": "REJECTED",
+          "requiredTasks": ["REJECT"]
+        }
+      ],
+      "CANCELLED": [
+        {
+          "nextState": "REVIVED",
+          "requiredTasks": ["REVIVE"]
+        },
+        {
+          "nextState": "CLOSED",
+          "requiredTasks": ["CLOSE"]
+        }
+      ],
+      "FINALISED": [
+        {
+          "nextState": "REVIVED",
+          "requiredTasks": ["REVIVE"]
+        }
+      ],
+      "ADDITIONAL_INFORMATION_REQUESTED": [
+        {
+          "nextState": "AWAITING_ADDITIONAL_INFORMATION",
+          "requiredTasks": ["ADDITIONAL_INFORMATION_REQUEST_MADE"]
+        }
+      ],
+      "REVIVED": [
+        {
+          "nextState": "CREDIT_TEAM",
+          "requiredTasks": ["ASSIGN_TO_CREDIT_TEAM"]
+        },
+        {
+          "nextState": "REFER_TO_SME",
+          "requiredTasks": ["ASSIGN_TO_SME"]
+        },
+        {
+          "nextState": "AWAITING_DECISION",
+          "requiredTasks": ["ASSIGN_TO_APPROVER"]
+        },
+        {
+          "nextState": "ADDITIONAL_INFORMATION_REQUESTED",
+          "requiredTasks": ["REQUEST_ADDITIONAL_INFORMATION"]
+        },
+        {
+          "nextState": "ON_HOLD_CREDIT_TEAM",
+          "requiredTasks": ["PUT_ON_HOLD"]
+        }
+      ]
+    },
+    "flags": [
+      "DOMESTIC",
+      "INTERNATIONAL",
+      "ARTS_PARTICIPATING",
+      "COMPLETED_ARTS"
+    ],
+    "initialState": "APPLICATION_RECEIVED"
+  }
+]
