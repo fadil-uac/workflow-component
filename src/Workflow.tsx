@@ -32,16 +32,12 @@ export const Workflow = () => {
   const parseWorkflowData = (): [MyNodeType[], Edge<any>[]] => {
     const workflow: IWorkflow = workflowData[0] as any;
 
-    const xpos = 100;
-    let ypos = 5;
-
     const nodes: MyNodeType[] = Object.entries(workflow.states).map(
       ([key, value]) => {
-        ypos += 100;
         return {
           id: key,
           data: { ...value, transitions: workflow.transitions[key], key: key },
-          position: { x: xpos, y: ypos },
+          position: { x: Math.random() * 500, y: Math.random() * 500 },
         };
       }
     );
@@ -59,7 +55,7 @@ export const Workflow = () => {
             source: key,
             target: targetId,
 
-            type: 'smoothstep',
+            type: 'straight',
           });
         }
       });
@@ -85,6 +81,7 @@ export const Workflow = () => {
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       nodeTypes={nodeTypes}
+      fitView
     >
       <Background />
     </ReactFlow>

@@ -165,6 +165,372 @@
           }
         },
         "label": "Any"
+      },
+      "VERIFICATION_IN_PROGRESS": {
+        "label": "Verification in progress",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "REQUEST_ADDITIONAL_INFORMATION": {
+            "type": "MANUAL",
+            "label": "Request further information"
+          },
+          "RUN_CREDIT_SEARCH": {
+            "type": "MANUAL",
+            "label": "Run credit search"
+          },
+          "START_ARTS": {
+            "type": "MANUAL",
+            "label": "Start ARTS verification"
+          }
+        }
+      },
+      "APPLICATION_RECEIVED": {
+        "preActions": {
+          "setWorkflowEntityFlags": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Set workflow entity flags",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-setWorkflowEntityFlags"
+          }
+        },
+        "finalState": false,
+        "label": "Application received"
+      },
+      "VISA_COMPLIANCE_CHECK": {
+        "finalState": false,
+        "label": "Visa compliance check",
+        "tasks": {
+          "START_VERIFICATION": {
+            "type": "MANUAL",
+            "label": "Start verification"
+          }
+        }
+      },
+      "AWAITING_DECISION": {
+        "preActions": {
+          "setCreditsToReadyLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Promote all precedents",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-setCreditsToReady"
+          }
+        },
+        "label": "Awaiting decision",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "approve"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_SME": {
+            "type": "MANUAL",
+            "label": "Assign to SME"
+          },
+          "APPROVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "approve"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Approve"
+          },
+          "ASSIGN_TO_CREDIT_TEAM": {
+            "type": "MANUAL",
+            "label": "Assign to credit team"
+          },
+          "REJECT": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "approve"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Reject"
+          },
+          "PUT_ON_HOLD": {
+            "type": "MANUAL",
+            "label": "Put on hold"
+          }
+        }
+      },
+      "CANCELLED": {
+        "finalState": true,
+        "tasks": {
+          "REVIVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "revive"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Revive"
+          },
+          "CLOSE": {
+            "type": "SYSTEM",
+            "label": "Close"
+          }
+        },
+        "label": "Cancelled"
+      },
+      "FINALISED": {
+        "finalState": true,
+        "tasks": {
+          "REVIVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "revive"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Revive"
+          }
+        },
+        "label": "Finalised"
+      },
+      "ADDITIONAL_INFORMATION_REQUESTED": {
+        "label": "Further information requested",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ADDITIONAL_INFORMATION_REQUEST_MADE": {
+            "type": "MANUAL",
+            "label": "Awaiting further information"
+          }
+        }
+      },
+      "REVIVED": {
+        "preActions": {
+          "runDemoteAllCredits": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Demote all credits to draft",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-demoteAllCredits"
+          },
+          "setCreditsToReadyLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Set all credits to ready",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-setCreditsToReady"
+          }
+        },
+        "label": "Revived",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "revive"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_APPROVER": {
+            "type": "MANUAL",
+            "label": "Assign to approver"
+          },
+          "ASSIGN_TO_SME": {
+            "type": "MANUAL",
+            "label": "Assign to SME"
+          },
+          "REQUEST_ADDITIONAL_INFORMATION": {
+            "type": "MANUAL",
+            "label": "Request further information"
+          },
+          "ASSIGN_TO_CREDIT_TEAM": {
+            "type": "MANUAL",
+            "label": "Assign to credit team"
+          },
+          "PUT_ON_HOLD": {
+            "type": "MANUAL",
+            "label": "Put on hold"
+          }
+        }
+      },
+      "VERIFICATION_NOT_STARTED": {
+        "label": "Verification not started",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "verify"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "START_VERIFICATION": {
+            "type": "MANUAL",
+            "label": "Start verification"
+          },
+          "RUN_CREDIT_SEARCH": {
+            "type": "MANUAL",
+            "label": "Run credit search"
+          },
+          "START_ARTS": {
+            "type": "MANUAL",
+            "label": "Start ARTS verification"
+          }
+        }
+      },
+      "ARTS_IN_PROGRESS": {
+        "preActions": {
+          "runDemoteAllCredits": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Demote all credits",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-triggerAllApplicantQArts"
+          }
+        },
+        "label": "ARTS in progress",
+        "finalState": false,
+        "tasks": {
+          "START_VERIFICATION": {
+            "type": "MANUAL",
+            "label": "Start verification"
+          }
+        }
+      },
+      "ARTS_COMPLETE": {
+        "label": "ARTS complete",
+        "finalState": false,
+        "tasks": {
+          "RUN_CREDIT_SEARCH": {
+            "label": "Run credit search",
+            "type": "MANUAL"
+          },
+          "START_VERIFICATION": {
+            "type": "MANUAL",
+            "label": "Start verification"
+          }
+        }
+      },
+      "REFER_TO_SME": {
+        "preActions": {
+          "runDemoteAllCredits": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Demote all credits",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-demoteAllCredits"
+          }
+        },
+        "label": "Refer to SME",
+        "data": {
+          "canDoManualMatching": true,
+          "permission": {
+            "component": "applications",
+            "usage": "edit"
+          },
+          "canRunCreditSearch": true
+        },
+        "finalState": false,
+        "tasks": {
+          "ASSIGN_TO_APPROVER": {
+            "type": "MANUAL",
+            "label": "Assign to approver"
+          },
+          "REQUEST_ADDITIONAL_INFORMATION": {
+            "type": "MANUAL",
+            "label": "Request further information"
+          },
+          "ASSIGN_TO_CREDIT_TEAM": {
+            "type": "MANUAL",
+            "label": "Assign to credit team"
+          }
+        }
+      },
+      "APPROVED": {
+        "preActions": {
+          "approveAllCreditsLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Approve all credits",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-approveAllCredits"
+          }
+        },
+        "label": "Approved",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "approve"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "REVIVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "revive"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Revive"
+          },
+          "FINALISE": {
+            "type": "SYSTEM",
+            "label": "Finalise"
+          }
+        }
+      },
+      "AUTO_MATCHING": {
+        "preActions": {
+          "runAutoMatchingLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Auto Match Application",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-runAutoMatching"
+          }
+        },
+        "finalState": false,
+        "label": "Auto-matching"
+      },
+      "REJECTED": {
+        "preActions": {
+          "rejectAllCreditsLambda": {
+            "awsRegion": "ap-southeast-2",
+            "label": "Reject all credits",
+            "type": "LAMBDA",
+            "functionName": "advance-<VARIABLE_ENV>-applications-rejectAllCredits"
+          }
+        },
+        "label": "Rejected",
+        "data": {
+          "permission": {
+            "component": "applications",
+            "usage": "approve"
+          }
+        },
+        "finalState": false,
+        "tasks": {
+          "REVIVE": {
+            "data": {
+              "permission": {
+                "component": "applications",
+                "usage": "revive"
+              }
+            },
+            "type": "MANUAL",
+            "label": "Revive"
+          },
+          "FINALISE": {
+            "type": "SYSTEM",
+            "label": "Finalise"
+          }
+        }
       }
     },
     "SK": "DEFINITION|APPLICATION",
@@ -337,6 +703,89 @@
         {
           "nextState": "ON_HOLD_CREDIT_TEAM",
           "requiredTasks": ["PUT_ON_HOLD"]
+        }
+      ],
+      "VERIFICATION_NOT_STARTED": [
+        {
+          "nextState": "AUTO_MATCHING",
+          "requiredTasks": ["RUN_CREDIT_SEARCH"]
+        },
+        {
+          "nextState": "VERIFICATION_IN_PROGRESS",
+          "requiredTasks": ["START_VERIFICATION"]
+        },
+        {
+          "nextState": "ARTS_IN_PROGRESS",
+          "requiredFlags": {
+            "flags": ["ARTS_PARTICIPATING"],
+            "type": "ALL"
+          }
+        },
+        {
+          "nextState": "ARTS_IN_PROGRESS",
+          "requiredTasks": ["START_ARTS"]
+        }
+      ],
+      "ARTS_IN_PROGRESS": [
+        {
+          "nextState": "VERIFICATION_IN_PROGRESS",
+          "requiredTasks": ["START_VERIFICATION"]
+        },
+        {
+          "nextState": "ARTS_COMPLETE",
+          "requiredFlags": {
+            "flags": ["COMPLETED_ARTS"],
+            "type": "ALL"
+          }
+        }
+      ],
+      "ARTS_COMPLETE": [
+        {
+          "nextState": "AUTO_MATCHING",
+          "requiredTasks": ["RUN_CREDIT_SEARCH"]
+        },
+        {
+          "nextState": "VERIFICATION_IN_PROGRESS",
+          "requiredTasks": ["START_VERIFICATION"]
+        }
+      ],
+      "REFER_TO_SME": [
+        {
+          "nextState": "AWAITING_DECISION",
+          "requiredTasks": ["ASSIGN_TO_APPROVER"]
+        },
+        {
+          "nextState": "CREDIT_TEAM",
+          "requiredTasks": ["ASSIGN_TO_CREDIT_TEAM"]
+        },
+        {
+          "nextState": "ADDITIONAL_INFORMATION_REQUESTED",
+          "requiredTasks": ["REQUEST_ADDITIONAL_INFORMATION"]
+        }
+      ],
+      "APPROVED": [
+        {
+          "nextState": "REVIVED",
+          "requiredTasks": ["REVIVE"]
+        },
+        {
+          "nextState": "FINALISED",
+          "requiredTasks": ["FINALISE"]
+        }
+      ],
+      "AUTO_MATCHING": [
+        {
+          "nextState": "CREDIT_TEAM"
+        }
+      ],
+      "REJECTED": [
+        {
+          "nextState": "REVIVED",
+          "requiredTasks": ["REVIVE"]
+        },
+        {
+          "nextState": "FINALISED",
+          "requiredTasks": ["FINALISE"]
         }
       ]
     },

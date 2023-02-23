@@ -1,7 +1,12 @@
-import { Workflow } from './Workflow';
+import { WorkflowDiagram } from './WorkflowDiagram';
 
 function App() {
-  return <Workflow />;
+  return (
+    <>
+      <WorkflowDiagram />
+      <div id="portal-root"></div>
+    </>
+  );
 }
 
 export default App;
