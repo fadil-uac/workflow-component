@@ -32,6 +32,8 @@ interface Props {
 const WorkflowGraph: React.FC<Props> = ({ data, onClickNode }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
+  const [isDragged, setIsDragged] = useState(false);
+
   useEffect(() => {
     if (!svgRef.current) return;
 
@@ -61,7 +63,7 @@ const WorkflowGraph: React.FC<Props> = ({ data, onClickNode }) => {
       .append('line')
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', (d) => Math.sqrt(d.target.length));
+      .attr('stroke-width', 2);
 
     const node = svg
       .append('g')
@@ -95,11 +97,22 @@ const WorkflowGraph: React.FC<Props> = ({ data, onClickNode }) => {
           .on('drag', (event, d: any) => {
             d.fx = event.x;
             d.fy = event.y;
+
+            const node = {
+              ...d,
+              x: event.sourceEvent.pageX,
+              y: event.sourceEvent.pageY,
+            };
+            onClickNode(node);
+
+            setIsDragged(true);
           })
           .on('end', (event, d: any) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
+            if (isDragged) {
+              if (!event.active) simulation.alphaTarget(0);
+              d.fx = null;
+              d.fy = null;
+            }
           })
       )
       .on('click', function (event: any, d: WorkflowNode) {
