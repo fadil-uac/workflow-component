@@ -94,8 +94,8 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
             const node = {
               ...d,
-              x: event.sourceEvent.screenX,
-              y: event.sourceEvent.screenY,
+              x: d.fx,
+              y: d.fy,
             };
             onClickNode(node);
 
@@ -109,10 +109,32 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
             }
           })
       )
-      .on('click', function (event: any, d: IWorkflowNode) {
-        const node = { ...d, x: event.pageX, y: event.pageY };
-        onClickNode(node);
+      .on('click', function (event, d: IWorkflowNode) {
+        onClickNode(d);
+
+        const selectedNodeIds = data.transitions
+          .filter((t: any) => t.source.id === d.id || t.target.id === d.id)
+          .map((t: any) => (t.source.id === d.id ? t.target.id : t.source.id))
+          .concat(d.id);
+
+        svg.selectAll('.node').style('opacity', (n: any) => {
+          return selectedNodeIds.includes(n.id) ? 1 : 0.1;
+        });
+
+        svg.selectAll('line').style('opacity', (t: any) => {
+          return selectedNodeIds.includes(t.source.id) &&
+            selectedNodeIds.includes(t.target.id)
+            ? 1
+            : 0.1;
+        });
       });
+
+    svg.on('click', (event) => {
+      if (event.target === svgRef.current) {
+        svg.selectAll('.node').style('opacity', 1);
+        svg.selectAll('line').style('opacity', 1);
+      }
+    });
 
     // define tick function
     simulation.on('tick', () => {
