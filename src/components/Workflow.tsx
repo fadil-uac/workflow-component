@@ -9,10 +9,10 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
+import { IState, ITransition, IWorkflow } from '../interface';
 import CustomNode from './CustomNode';
-import { IState, ITransition, IWorkflow } from './interface';
 
-import workflowData from './assets/workflow.json';
+import workflowData from '../assets/workflow.json';
 
 interface MyNodeType {
   id: string;

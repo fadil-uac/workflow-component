@@ -1,12 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  --colour-background: #f4f6f8;
+  --colour-primary: #182250;
+  --colour-font: #212b36;
+  --colour-font-subdued: #637381;
+  --colour-grey: #dfe3e7;
+  --colour-red: #de3518;
+
+  --colour-error: #bf0711;
+  --colour-error-background: #fde7e5;
+  --colour-success: #108043;
+  --colour-warning: #eec200;
+  --colour-info: #212b36;
+}
 
 html,
 body,
 #root,
 .App {
   height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .App {
@@ -22,11 +38,14 @@ body,
 
 .workflow-container {
   position: relative;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+
+  overflow: hidden;
+}
+
+.node {
+  fill: var(--colour-primary);
 }
 
 .node-label {
@@ -39,7 +58,7 @@ body,
   line-height: 1.2em;
   text-align: center;
   word-wrap: break-word;
-  color: red;
+  color: var(--colour-background);
   cursor: pointer;
 }
 
@@ -53,10 +72,10 @@ body,
 
   word-wrap: break-word;
   border-radius: 4px;
-  background-color: #cecece;
+  background-color: var(--colour-grey);
 
   overflow: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .state-header {
@@ -64,7 +83,7 @@ body,
   margin-bottom: 8px;
 
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
@@ -77,7 +96,7 @@ body,
   font-size: 10px;
   font-weight: bold;
 
-  color: green;
+  color: var(--colour-success);
 }
 
 .state-content {

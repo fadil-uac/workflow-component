@@ -27,3 +27,22 @@ export interface IRequiredFlags {
   flags: string[];
   type: string;
 }
+
+export interface IWorkflowNode {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  state?: IState;
+}
+
+export interface IWorkflowTransition {
+  id: string;
+  source: string;
+  target: string;
+}
+
+export interface IWorkflowGraphData {
+  nodes: IWorkflowNode[];
+  transitions: IWorkflowTransition[];
+}
