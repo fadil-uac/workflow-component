@@ -10,13 +10,16 @@ import { StateView } from './StateView';
 
 import { Button } from 'antd';
 import workflowDatas from '../assets/workflow.json';
+import { GraphControl } from './GraphControl';
 import { WorkflowGraph } from './WorkflowGraph';
 
 export const WorkflowDiagram = () => {
+  const stateViewRef = useRef<HTMLDivElement>(null);
+
   const [selectedNode, setSelectedNode] = useState<IWorkflowNode>();
   const [workflowGraphData, setWorkflowGraphData] =
     useState<IWorkflowGraphData>();
-  const stateViewRef = useRef<HTMLDivElement>(null);
+  const [distance, setDistance] = useState(100);
 
   useOnClickOutside(stateViewRef, () => {
     setSelectedNode(undefined);
@@ -96,6 +99,7 @@ export const WorkflowDiagram = () => {
     <div className="workflow-container">
       <WorkflowGraph
         data={filterWorkflowParsed}
+        distance={distance}
         onClickNode={setSelectedNode}
       />
       <div ref={stateViewRef}>
@@ -106,6 +110,8 @@ export const WorkflowDiagram = () => {
           />
         )}
       </div>
+
+      <GraphControl value={distance} onChange={setDistance} />
 
       <Button
         type="primary"

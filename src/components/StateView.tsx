@@ -12,14 +12,7 @@ export const StateView: React.FC<StateViewProps> = ({
   onFilterConnectedNodes,
 }) => {
   return (
-    <div
-      className="state-view"
-      style={{
-        position: 'absolute',
-        left: node.x,
-        top: node.y,
-      }}
-    >
+    <div className="state-view">
       <div className="state-header">
         <div className="state-title">{node.label}</div>
         <div className="state-status">
@@ -75,15 +68,17 @@ export const StateView: React.FC<StateViewProps> = ({
         </div>
       )}
 
-      <Button
-        type="primary"
-        style={{ marginTop: '1rem' }}
-        onClick={() => {
-          onFilterConnectedNodes(node);
-        }}
-      >
-        Show connected only
-      </Button>
+      <div className="state-footer">
+        <Button
+          type="primary"
+          style={{ marginTop: '1rem' }}
+          onClick={() => {
+            onFilterConnectedNodes(node);
+          }}
+        >
+          Show connected only
+        </Button>
+      </div>
     </div>
   );
 };

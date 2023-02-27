@@ -9,11 +9,13 @@ import {
 
 type WorkflowGraphProps = {
   data: IWorkflowGraphData;
+  distance: number;
   onClickNode(node: IWorkflowNode): void;
 };
 
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   data,
+  distance,
   onClickNode,
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -43,7 +45,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
         d3
           .forceLink(data.transitions)
           .id((d: any) => d.id)
-          .distance(100)
+          .distance(distance)
       )
       .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(Number(width) / 2, Number(height) / 2));
@@ -92,12 +94,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
             d.fx = event.x;
             d.fy = event.y;
 
-            const node = {
-              ...d,
-              x: d.fx,
-              y: d.fy,
-            };
-            onClickNode(node);
+            onClickNode(d);
 
             setIsDragged(true);
           })
@@ -151,7 +148,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
     return () => {
       simulation.stop();
     };
-  }, [data]);
+  }, [data, distance]);
 
   return (
     <svg
