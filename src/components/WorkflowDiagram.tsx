@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
-import { useOnClickOutside } from 'usehooks-ts';
+import { useMemo, useState } from 'react';
 import {
   IWorkflow,
   IWorkflowGraphData,
@@ -14,16 +13,10 @@ import { GraphControl } from './GraphControl';
 import { WorkflowGraph } from './WorkflowGraph';
 
 export const WorkflowDiagram = () => {
-  const stateViewRef = useRef<HTMLDivElement>(null);
-
   const [selectedNode, setSelectedNode] = useState<IWorkflowNode>();
   const [workflowGraphData, setWorkflowGraphData] =
     useState<IWorkflowGraphData>();
   const [distance, setDistance] = useState(100);
-
-  useOnClickOutside(stateViewRef, () => {
-    setSelectedNode(undefined);
-  });
 
   const parseWorkflowData = (): IWorkflowGraphData => {
     const workflowData: IWorkflow = workflowDatas[0] as any;
@@ -96,37 +89,38 @@ export const WorkflowDiagram = () => {
   };
 
   return (
-    <div className="workflow-container">
-      <WorkflowGraph
-        data={filterWorkflowParsed}
-        distance={distance}
-        onClickNode={setSelectedNode}
-      />
-      <div ref={stateViewRef}>
+    <div className="workflow-wrapper">
+      <div className="workflow-container">
+        <WorkflowGraph
+          data={filterWorkflowParsed}
+          distance={distance}
+          onClickNode={setSelectedNode}
+        />
         {selectedNode && (
           <StateView
             node={selectedNode}
+            onClickOutside={() => setSelectedNode(undefined)}
             onFilterConnectedNodes={handleFilterConnectedNodes}
           />
         )}
+
+        <GraphControl value={distance} onChange={setDistance} />
+
+        <Button
+          type="primary"
+          style={{
+            marginTop: '1rem',
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+          }}
+          onClick={() => {
+            setWorkflowGraphData(undefined);
+          }}
+        >
+          Show all nodes
+        </Button>
       </div>
-
-      <GraphControl value={distance} onChange={setDistance} />
-
-      <Button
-        type="primary"
-        style={{
-          marginTop: '1rem',
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-        }}
-        onClick={() => {
-          setWorkflowGraphData(undefined);
-        }}
-      >
-        Show all nodes
-      </Button>
     </div>
   );
 };

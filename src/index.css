@@ -41,10 +41,19 @@ body,
   color: white;
 }
 
+.workflow-wrapper {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .workflow-container {
   position: relative;
-  width: fit-content;
-  height: fit-content;
+  width: 80%;
+  height: 80%;
 
   overflow: hidden;
 }

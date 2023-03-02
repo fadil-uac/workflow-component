@@ -10,7 +10,7 @@ import {
 type WorkflowGraphProps = {
   data: IWorkflowGraphData;
   distance: number;
-  onClickNode(node: IWorkflowNode): void;
+  onClickNode(node: IWorkflowNode | undefined): void;
 };
 
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
@@ -35,8 +35,21 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
       svg.selectAll('*').remove();
     }
 
-    const width = svg.attr('width');
-    const height = svg.attr('height');
+    const width = svg.node()?.getBoundingClientRect().width ?? 0;
+    const height = svg.node()?.getBoundingClientRect().height ?? 0;
+
+    const zoomBehavior = d3
+      .zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 5])
+      .translateExtent([
+        [0, 0],
+        [width, height],
+      ])
+      .on('zoom', (event) => {
+        svg.selectAll('g').attr('transform', event.transform);
+      });
+
+    svg.call(zoomBehavior);
 
     const simulation = d3
       .forceSimulation<IWorkflowNode>(data.nodes)
@@ -128,6 +141,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
     svg.on('click', (event) => {
       if (event.target === svgRef.current) {
+        onClickNode(undefined);
         svg.selectAll('.node').style('opacity', 1);
         svg.selectAll('line').style('opacity', 1);
       }
@@ -153,9 +167,11 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   return (
     <svg
       ref={svgRef}
-      style={{ backgroundColor: '#eeeeee' }}
-      width="1280"
-      height="1080"
+      style={{
+        backgroundColor: '#eeeeee',
+        width: '100%',
+        height: '100%',
+      }}
     ></svg>
   );
 };

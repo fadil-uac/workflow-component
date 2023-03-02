@@ -1,18 +1,28 @@
 import { Button } from 'antd';
+import { useRef } from 'react';
+import { useOnClickOutside } from 'usehooks-ts';
 
 import { IWorkflowNode } from '../interface';
 
 type StateViewProps = {
   node: IWorkflowNode;
+  onClickOutside(): void;
   onFilterConnectedNodes(node: IWorkflowNode): void;
 };
 
 export const StateView: React.FC<StateViewProps> = ({
   node,
+  onClickOutside,
   onFilterConnectedNodes,
 }) => {
+  const stateViewRef = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(stateViewRef, () => {
+    onClickOutside();
+  });
+
   return (
-    <div className="state-view">
+    <div ref={stateViewRef} className="state-view">
       <div className="state-header">
         <div className="state-title">{node.label}</div>
         <div className="state-status">
@@ -28,6 +38,7 @@ export const StateView: React.FC<StateViewProps> = ({
               <div className="content-list">
                 {Object.entries(node.state.tasks).map(([key, value]) => (
                   <div
+                    key={key}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -50,6 +61,7 @@ export const StateView: React.FC<StateViewProps> = ({
               <div className="content-list">
                 {Object.entries(node.state.data).map(([key, value]) => (
                   <div
+                    key={key}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
